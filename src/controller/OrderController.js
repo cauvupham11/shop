@@ -11,10 +11,10 @@ const createOrder = async (req, res) => {
     //     { "productId": 202, "amount": 1 }
     //   ]
     // }
-    const { userId, orderItems } = req.body;
+    const { userId, phoneNumber, address, orderItems } = req.body;
     try {
         // 1. Tạo Order trước
-        const newOrder = await Order.create({ userId })
+        const newOrder = await Order.create({ userId, phoneNumber, address });
         const orderId = newOrder.id
 
         // 2. Tạo danh OrderItem với vòng for 
@@ -71,7 +71,7 @@ const getAllOrder = async (req, res) => {
             include: [
                 {
                     model: OrderItem,
-                    as: 'orderItems',  
+                    as: 'orderItems',
                     include: [
                         {
                             model: Product,
