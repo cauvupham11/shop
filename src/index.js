@@ -15,7 +15,8 @@ app.use(passport.initialize());
 // Import cấu hình trước middleware auth
 require('./config/config');
 require('./middleware/auth');
-
+const setupAssociations = require('./models/relationship');
+setupAssociations()
 // Routes
 const orderRoutes = require('./routes/OrderRoutes');
 const userRoutes = require('./routes/UserRoutes');
