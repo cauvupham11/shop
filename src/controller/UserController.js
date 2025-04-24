@@ -15,7 +15,6 @@ const createUser = async (req, res) => {
             password: hashedPassword,
             role: 'user' 
         });
-
         const { password: _, ...userData } = user.toJSON();
         res.status(201).json(userData);
     } catch (error) {

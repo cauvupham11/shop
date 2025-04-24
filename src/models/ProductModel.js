@@ -23,19 +23,6 @@ const Product = sequelize.define('Product', {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-    countInStock: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    rating: {
-        type: DataTypes.FLOAT,
-        allowNull: true, 
-        defaultValue: 0,
-    },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
 }, {
     timestamps: true, 
 });

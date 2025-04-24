@@ -8,7 +8,7 @@ if (!config.jwtSecret) {
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: config.jwtSecret // Sử dụng từ config
+  secretOrKey: config.jwtSecret 
 };
 
 passport.use(
@@ -27,16 +27,7 @@ passport.use(
 
 const authenticateJWT = passport.authenticate('jwt', { session: false });
 
-const authorizeRoles = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    next();
-  };
-};
 
 module.exports = {
-  authenticateJWT,
-  authorizeRoles
-};
+    authenticateJWT,
+}
