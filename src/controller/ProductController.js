@@ -11,8 +11,6 @@ const createProduct = async (req, res) => {
                 error: `Missing required fields: ${missingFields.join(', ')}`
             });
         }
-
-        // Thêm giá trị mặc định cho rating nếu không có
         const productData = {
             ...req.body,
             rating: req.body.rating || 0
@@ -33,8 +31,6 @@ const getAllProducts = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-// Get product by ID
 const getProductById = async (req, res) => {
     try {
         const product = await Product.findByPk(req.params.id);
@@ -46,8 +42,6 @@ const getProductById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-// Update product
 const updateProduct = async (req, res) => {
     try {
         const [updated] = await Product.update(req.body, {
@@ -63,7 +57,6 @@ const updateProduct = async (req, res) => {
     }
 };
 
-// Delete product
 const deleteProduct = async (req, res) => {
     try {
         const deleted = await Product.destroy({
@@ -77,8 +70,6 @@ const deleteProduct = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-// Search products by name
 const searchProducts = async (req, res) => {
     try {
         const { name } = req.query;

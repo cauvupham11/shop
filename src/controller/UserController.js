@@ -1,5 +1,6 @@
 const User= require ('../models/userModel');
 const { Sequelize } = require('sequelize');
+const { generateToken } = require('../config/jwt');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -12,6 +13,7 @@ const createUser = async (req, res) => {
             username,
             email,
             password: hashedPassword,
+            role: 'user' 
         });
 
         const { password: _, ...userData } = user.toJSON();
@@ -20,8 +22,6 @@ const createUser = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-
-
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.findAll({
@@ -119,26 +119,28 @@ const loginUser = async (req, res) => {
 
     try {
         const user = await User.findOne({ where: { email } });
-
         if (!user) {
             return res.status(404).json({ error: 'Email not found' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid password' });
         }
 
+        const token = generateToken(user);
         const { password: _, ...userData } = user.toJSON();
-        res.status(200).json({ message: 'Login successful', user: userData });
+        
+        res.status(200).json({ 
+            message: 'Login successful', 
+            user: userData,
+            token 
+        });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
-
-
 module.exports = {
     createUser,
     getAllUsers,
