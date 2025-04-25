@@ -2,6 +2,7 @@ const Order = require('../models/OrderModel');
 const OrderItem = require('../models/OrderItemModel');
 const Product = require('../models/ProductModel');
 const { syncIndexes } = require('mongoose');
+const { Op } = require('sequelize');
 
 const createOrder = async (req, res) => {
     // nhận 2 đối tượng
@@ -43,18 +44,18 @@ const getAllOrdersByUserId = async (req, res) => {
     try {
         const orders = await Order.findAll({
             where: { userId: userId },
-            include: [
-                {
-                    model: OrderItem,
-                    as: 'orderItems',  // Sử dụng tên alias đã đặt trong quan hệ
-                    include: [
-                        {
-                            model: Product,
-                            as: 'product'
-                        }
-                    ]
-                }
-            ]
+            // include: [
+            //     {
+            //         model: OrderItem,
+            //         as: 'orderItems',  // Sử dụng tên alias đã đặt trong quan hệ
+            //         include: [
+            //             {
+            //                 model: Product,
+            //                 as: 'product'
+            //             }
+            //         ]
+            //     }
+            // ]
         });
 
         res.status(200).json(orders);
@@ -64,10 +65,47 @@ const getAllOrdersByUserId = async (req, res) => {
         return;
     }
 };
-
 const getAllOrder = async (req, res) => {
     try {
+        const { from, to } = req.query; // ?from=2024-01-01&to=2024-01-31
+        console.log(`from: ${from}, to: ${to}`);
+
+        const whereClause = {};
+
+        if (from && to) {
+            whereClause.createdAt = {
+                [Op.between]: [new Date(from), new Date(to)]
+            };
+        }
+
         const orders = await Order.findAll({
+            where: whereClause,
+            // include: [
+            //     {
+            //         model: OrderItem,
+            //         as: 'orderItems',
+            //         include: [
+            //             {
+            //                 model: Product,
+            //                 as: 'product'
+            //             }
+            //         ]
+            //     }
+            // ]
+        });
+
+        res.status(200).json(orders);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+const getDetailOrderByOrderId = async (req, res) => {
+    const { orderId } = req.params;
+    console.log(orderId);
+
+    try {
+        const orders = await Order.findOne({
+            where: { id: orderId },
             include: [
                 {
                     model: OrderItem,
@@ -88,10 +126,35 @@ const getAllOrder = async (req, res) => {
         res.status(500).json({ error: error.message });
         return;
     }
-};
+}
+// const getAllOrder = async (req, res) => {
+//     try {
+//         const orders = await Order.findAll({
+//             include: [
+//                 {
+//                     model: OrderItem,
+//                     as: 'orderItems',
+//                     include: [
+//                         {
+//                             model: Product,
+//                             as: 'product'
+//                         }
+//                     ]
+//                 }
+//             ]
+//         });
+
+//         res.status(200).json(orders);
+//         return;
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//         return;
+//     }
+// };
 
 module.exports = {
     createOrder,
     getAllOrdersByUserId,
-    getAllOrder
+    getAllOrder,
+    getDetailOrderByOrderId
 }
