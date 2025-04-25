@@ -21,7 +21,6 @@ const Order = sequelize.define('Order', {
     },
 }, {
     timestamps: true,
-    paranoid: true, // enable deletedAt
 });
 
 module.exports = Order;
